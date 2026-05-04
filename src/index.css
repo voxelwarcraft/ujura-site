@@ -184,3 +184,15 @@ footer { max-width: 1280px; margin: 0 auto; padding: 28px 24px; border-top: 1px 
   .starmap { height: 500px; }
   footer { flex-direction: column; }
 }
+
+.control-banner {
+  max-width: 1280px;
+  margin: 18px auto 0;
+  border: 1px solid rgba(141,219,236,.35);
+  background: rgba(79,163,183,.14);
+  color: white;
+  padding: 14px 24px;
+  border-radius: 18px;
+  line-height: 1.6;
+  box-shadow: 0 0 40px rgba(79,163,183,.16);
+}

@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useSiteControl } from './useSiteControl';
 
 const raceNames = ['Nexari', 'Korrath', 'Veyra', 'Valthorak'];
 const shipClasses = ['Frigate', 'Cruiser', 'Battleship', 'Carrier', 'Dreadnaught', 'Freighter'];
@@ -18,12 +19,12 @@ const stationNamesByRace = {
 };
 
 const shipClassData = {
-  Frigate: { symbol: 'â³', price: '0.25 SOL', copyRate: '1 copy / 12â24 hrs', runs: '10â20 runs per copy', tier: 'Frigate Ship Blueprint', supplyCount: 10 },
-  Cruiser: { symbol: 'â', price: '0.5 SOL', copyRate: '1 copy / 24 hrs', runs: '8â15 runs per copy', tier: 'Cruiser Ship Blueprint', supplyCount: 5 },
-  Battleship: { symbol: 'â¬¢', price: '1 SOL', copyRate: '1 copy / 24â36 hrs', runs: '5â10 runs per copy', tier: 'Battleship Ship Blueprint', supplyCount: 5 },
-  Carrier: { symbol: 'â£', price: '3 SOL', copyRate: '1 copy / 36â48 hrs', runs: '3â6 runs per copy', tier: 'Carrier Ship Blueprint', supplyCount: 3 },
-  Dreadnaught: { symbol: 'â¬¡', price: '3 SOL', copyRate: '1 copy / 48â72 hrs', runs: '1â3 runs per copy', tier: 'Dreadnaught Ship Blueprint', supplyCount: 3 },
-  Freighter: { symbol: 'â¤', price: '3 SOL', copyRate: '1 copy / 36â48 hrs', runs: '3â6 runs per copy', tier: 'Freighter Ship Blueprint', supplyCount: 3 }
+  Frigate: { symbol: '△', price: '0.25 SOL', copyRate: '1 copy / 12–24 hrs', runs: '10–20 runs per copy', tier: 'Frigate Ship Blueprint', supplyCount: 10 },
+  Cruiser: { symbol: '◇', price: '0.5 SOL', copyRate: '1 copy / 24 hrs', runs: '8–15 runs per copy', tier: 'Cruiser Ship Blueprint', supplyCount: 5 },
+  Battleship: { symbol: '⬢', price: '1 SOL', copyRate: '1 copy / 24–36 hrs', runs: '5–10 runs per copy', tier: 'Battleship Ship Blueprint', supplyCount: 5 },
+  Carrier: { symbol: '▣', price: '3 SOL', copyRate: '1 copy / 36–48 hrs', runs: '3–6 runs per copy', tier: 'Carrier Ship Blueprint', supplyCount: 3 },
+  Dreadnaught: { symbol: '⬡', price: '3 SOL', copyRate: '1 copy / 48–72 hrs', runs: '1–3 runs per copy', tier: 'Dreadnaught Ship Blueprint', supplyCount: 3 },
+  Freighter: { symbol: '▤', price: '3 SOL', copyRate: '1 copy / 36–48 hrs', runs: '3–6 runs per copy', tier: 'Freighter Ship Blueprint', supplyCount: 3 }
 };
 
 const blueprintNFTs = raceNames.flatMap((race) => shipClasses.map((shipClass) => {
@@ -53,11 +54,11 @@ const miningBlueprint = {
   supply: '10 Master Original Blueprints',
   supplyCount: 10,
   remaining: 10,
-  copyRate: '1 copy / 24â36 hrs',
-  runs: '8â15 runs per copy',
+  copyRate: '1 copy / 24–36 hrs',
+  runs: '8–15 runs per copy',
   price: '0.25 SOL',
   perk: 'Permanent production rights for the Mining Barge, used for resource extraction, industrial logistics, and mining fleet operations.',
-  symbol: 'â¬'
+  symbol: '⌬'
 };
 
 const founderStationNFTs = raceNames.map((race) => ({
@@ -67,9 +68,9 @@ const founderStationNFTs = raceNames.map((race) => ({
   category: 'Founder Capital Station NFT',
   supply: '1 Founder Station NFT',
   price: '25 SOL',
-  creditTax: '2â4% Credits Tax',
-  perk: `Founder NFT for ${stationNamesByRace[race]}, the ${race} capital station. The holder receives a 2â4% Credits tax on all market transactions inside the ${race} regional market economy. Credits are the main in-game currency used for player trading, manufacturing, market purchases, and station commerce.`,
-  symbol: 'â'
+  creditTax: '2–4% Credits Tax',
+  perk: `Founder NFT for ${stationNamesByRace[race]}, the ${race} capital station. The holder receives a 2–4% Credits tax on all market transactions inside the ${race} regional market economy. Credits are the main in-game currency used for player trading, manufacturing, market purchases, and station commerce.`,
+  symbol: '◉'
 }));
 
 const features = [
@@ -83,42 +84,42 @@ const features = [
   'Manufacturing economy powered by resources and Blueprint Copies',
   'Ancient Ruins and Raid Sites with rare pirate faction ship blueprints',
   'Weapons and gear for your character earned through exploration and raids',
-  'Founder Capital Station NFTs earn 2â4% Credits tax in their region',
+  'Founder Capital Station NFTs earn 2–4% Credits tax in their region',
   'Blueprint NFTs let players own production rights, not direct power'
 ];
 
 const factions = [
-  { name: 'Nexari', number: '01', icon: 'â²', vibe: 'High-tech empire + precision warfare', text: 'The Nexari are disciplined, advanced, and built around command structure. Their fleets favor precision, shields, clean engineering, and controlled battlefield pressure.', traits: ['Precision fleets', 'Shield systems', 'Advanced tech', 'Order + control'] },
-  { name: 'Korrath', number: '02', icon: 'â¦', vibe: 'War clans + brutal frontline power', text: 'The Korrath are forged by conquest, survival, and heavy fleet warfare. Their ships hit hard, hold territory, and dominate direct conflict in low-sec and null-sec.', traits: ['Heavy firepower', 'Armor ships', 'War clans', 'Frontline combat'] },
-  { name: 'Veyra', number: '03', icon: 'â', vibe: 'Veil science + anomaly mastery', text: 'The Veyra push into strange physics, relic systems, and Veil research. Their ships feel experimental, elusive, and dangerous in unpredictable space.', traits: ['Veil research', 'Stealth systems', 'Anomaly tech', 'Unpredictable tactics'] },
-  { name: 'Valthorak', number: '04', icon: 'â', vibe: 'Industrial sovereignty + deep-space logistics', text: 'The Valthorak are builders, miners, haulers, and territorial operators. They turn infrastructure, production, and supply lines into power.', traits: ['Industrial power', 'Freighter culture', 'Resource control', 'Territory logistics'] }
+  { name: 'Nexari', number: '01', icon: '▲', vibe: 'High-tech empire + precision warfare', text: 'The Nexari are disciplined, advanced, and built around command structure. Their fleets favor precision, shields, clean engineering, and controlled battlefield pressure.', traits: ['Precision fleets', 'Shield systems', 'Advanced tech', 'Order + control'] },
+  { name: 'Korrath', number: '02', icon: '✦', vibe: 'War clans + brutal frontline power', text: 'The Korrath are forged by conquest, survival, and heavy fleet warfare. Their ships hit hard, hold territory, and dominate direct conflict in low-sec and null-sec.', traits: ['Heavy firepower', 'Armor ships', 'War clans', 'Frontline combat'] },
+  { name: 'Veyra', number: '03', icon: '◌', vibe: 'Veil science + anomaly mastery', text: 'The Veyra push into strange physics, relic systems, and Veil research. Their ships feel experimental, elusive, and dangerous in unpredictable space.', traits: ['Veil research', 'Stealth systems', 'Anomaly tech', 'Unpredictable tactics'] },
+  { name: 'Valthorak', number: '04', icon: '◇', vibe: 'Industrial sovereignty + deep-space logistics', text: 'The Valthorak are builders, miners, haulers, and territorial operators. They turn infrastructure, production, and supply lines into power.', traits: ['Industrial power', 'Freighter culture', 'Resource control', 'Territory logistics'] }
 ];
 
 const systems = [
-  { name: 'Highsec Orbits', label: 'Protected Space', text: 'Safer missions, starter combat sites, trade hubs, faction patrols, market access, and lower-risk progression for new pilots.', icon: 'â' },
-  { name: 'Lowsec Fractures', label: 'Pirate Frontier', text: 'Weaker law, richer combat sites, pirate faction NPCs, hauler ambushes, bounty hunting, and player-driven piracy.', icon: 'â¦' },
-  { name: 'Nullsec Frontiers', label: 'Lawless Territory', text: 'Full PvP regions where alliances fight over planets, moons, gas fields, outposts, rare resources, pirate sites, and the Starcore.', icon: 'â' },
-  { name: 'Veil Systems', label: 'Dungeon Space', text: 'Temporary wormhole-style systems filled with brutal planets, rare bosses, relics, and endgame loot.', icon: 'â§' }
+  { name: 'Highsec Orbits', label: 'Protected Space', text: 'Safer missions, starter combat sites, trade hubs, faction patrols, market access, and lower-risk progression for new pilots.', icon: '◇' },
+  { name: 'Lowsec Fractures', label: 'Pirate Frontier', text: 'Weaker law, richer combat sites, pirate faction NPCs, hauler ambushes, bounty hunting, and player-driven piracy.', icon: '✦' },
+  { name: 'Nullsec Frontiers', label: 'Lawless Territory', text: 'Full PvP regions where alliances fight over planets, moons, gas fields, outposts, rare resources, pirate sites, and the Starcore.', icon: '◎' },
+  { name: 'Veil Systems', label: 'Dungeon Space', text: 'Temporary wormhole-style systems filled with brutal planets, rare bosses, relics, and endgame loot.', icon: '✧' }
 ];
 
 const gameplayLoop = [
-  { step: '01', title: 'Choose Your Space', text: 'Run safer missions in high-sec, hunt better rewards in low-sec, or enter null-sec where PvP, piracy, and guild warfare control the map.', icon: 'â' },
-  { step: '02', title: 'Run Missions + Combat Sites', text: 'Take contracts, clear pirate faction NPCs, scan combat anomalies, and push into escalating combat sites for better loot.', icon: 'â¦' },
-  { step: '03', title: 'Harvest Space Resources', text: 'Mine asteroid belts, extract moon resources, scan gas fields, and haul raw materials through risky routes.', icon: 'â¬' },
-  { step: '04', title: 'Risk Loss + Loot', text: 'If your ship is destroyed, you can lose it and drop loot. Other players can take your wreck, cargo, modules, and valuable resources.', icon: 'â ' },
-  { step: '05', title: 'Manufacture + Build', text: 'Refine resources and use Blueprint Copies to manufacture ships, modules, outposts, and economy-driving items.', icon: 'â£' },
-  { step: '06', title: 'Pirate, Defend + Go to War', text: 'Ambush haulers, defend trade routes, fight pirate factions, and battle players over Starcore, moons, gas fields, and territory.', icon: 'â' }
+  { step: '01', title: 'Choose Your Space', text: 'Run safer missions in high-sec, hunt better rewards in low-sec, or enter null-sec where PvP, piracy, and guild warfare control the map.', icon: '◇' },
+  { step: '02', title: 'Run Missions + Combat Sites', text: 'Take contracts, clear pirate faction NPCs, scan combat anomalies, and push into escalating combat sites for better loot.', icon: '✦' },
+  { step: '03', title: 'Harvest Space Resources', text: 'Mine asteroid belts, extract moon resources, scan gas fields, and haul raw materials through risky routes.', icon: '⌬' },
+  { step: '04', title: 'Risk Loss + Loot', text: 'If your ship is destroyed, you can lose it and drop loot. Other players can take your wreck, cargo, modules, and valuable resources.', icon: '☠' },
+  { step: '05', title: 'Manufacture + Build', text: 'Refine resources and use Blueprint Copies to manufacture ships, modules, outposts, and economy-driving items.', icon: '▣' },
+  { step: '06', title: 'Pirate, Defend + Go to War', text: 'Ambush haulers, defend trade routes, fight pirate factions, and battle players over Starcore, moons, gas fields, and territory.', icon: '⚔' }
 ];
 
 const gameSystems = [
-  { title: 'Space Combat Missions', tag: 'PVE COMBAT', icon: 'â¦', text: 'Players can take space missions from stations, factions, agents, and regional contacts. Missions send pilots into asteroid belts, deadspace pockets, pirate hideouts, convoy ambushes, defense contracts, and faction combat assignments.', bullets: ['Station mission agents', 'Faction combat contracts', 'Escort and defense missions', 'Pirate hunting assignments', 'Convoy interception', 'Rewards in Credits, loot, and reputation'] },
-  { title: 'Combat Sites + Pirate NPCs', tag: 'PIRATE FACTION PVE', icon: 'â ', text: 'Combat sites are scannable space encounters filled with pirate faction NPCs, elite captains, rare spawns, and escalating rooms. Harder sites can drop rare modules, character gear materials, ship components, and pirate faction blueprint rewards.', bullets: ['Scannable combat anomalies', 'Pirate faction NPC fleets', 'Elite captain spawns', 'Escalating combat rooms', 'Rare loot tables', 'Pirate faction blueprint chances'] },
-  { title: 'PvP, Pirating + Security Status', tag: 'PLAYER CONFLICT', icon: 'â', text: 'Ujura space is divided by security status. High-sec protects newer players and trade, low-sec introduces piracy, ambushes, and better rewards, while null-sec is lawless guild territory where players fight over routes, moons, gas fields, planets, outposts, and the Starcore. Ship destruction carries real risk because destroyed ships can drop loot that other players take.', bullets: ['High-sec safer missions and trade', 'Low-sec piracy and better loot', 'Null-sec full player warfare', 'Hauler ambushes and ransom gameplay', 'Destroyed ships can drop loot', 'Security status shapes risk and reward'] },
-  { title: 'Asteroid, Moon + Gas Harvesting', tag: 'RESOURCE ECONOMY', icon: 'â¬', text: 'Ujuraâs industrial economy starts in space. Players mine asteroid belts, harvest moon materials, scan and extract gas fields, then move those resources through dangerous routes into refining, manufacturing, markets, and war production.', bullets: ['Asteroid belt mining', 'Moon resource harvesting', 'Gas field scanning and extraction', 'Refining and hauling routes', 'Manufacturing supply chains', 'Resources create conflict'] },
-  { title: 'Planets Are Full Game Zones', tag: 'SPACE + GROUND LAYER', icon: 'â', text: 'Planets are a full second progression layer where players land, explore Dofus-style maps, fight mobs and bosses, enter Ancient Ruins and Raid Sites, collect loot, and extract everything back through space. Planet content can reward rare pirate faction ship blueprints along with weapons and gear for your character.', bullets: ['5â10 main zones per planet', '20â50+ effective areas', 'Ancient Ruins and Raid Sites', 'Rare pirate faction ship blueprints', 'Character weapons and gear', 'Loot must be extracted to ship'] },
-  { title: 'The Ujura Starcore', tag: 'ONE-OF-ONE WAR OBJECTIVE', icon: 'â¦', text: 'Only one Starcore exists at a time. It appears as a high-risk null-sec combat site, gets looted, then must be deployed at a star within 1 hour. Once deployed, every player receives a global announcement and the star becomes the main PvP battleground.', bullets: ['Only one active Starcore', 'Deploy at any null-sec star', '10-minute capture requirement', 'Rewards paid every 22 minutes', 'Active for 7â14 days', 'Control shifts through PvP'] },
-  { title: 'Blueprint NFT Economy', tag: 'PRODUCTION, NOT PAY-TO-WIN', icon: 'â£', text: 'Master Original Blueprint NFTs give production rights for specific ships or items, but they do not create ships directly. Owners generate limited-use Blueprint Copies over time. Players still need resources, crafting time, and gameplay participation to produce the actual ships.', bullets: ['NFTs control production rights', 'Blueprint Copies are in-game only', 'Copies have limited crafting runs', 'Each race has each ship class', 'Scarcity lives at production level', 'Ships still enter PvP and economy'] },
-  { title: 'Founder Station Taxes', tag: 'REGIONAL MARKET OWNERSHIP', icon: 'â', text: 'Founder Capital Station NFT holders receive a 2â4% Credits tax on all market transactions in their raceâs region. Credits are the main in-game currency used for trading, manufacturing, market purchases, and station commerce.', bullets: ['Credits are the main currency', '2â4% regional market tax', 'One station NFT per race', 'Applies to race regional markets', 'Station commerce matters', 'Markets become strategic assets'] }
+  { title: 'Space Combat Missions', tag: 'PVE COMBAT', icon: '✦', text: 'Players can take space missions from stations, factions, agents, and regional contacts. Missions send pilots into asteroid belts, deadspace pockets, pirate hideouts, convoy ambushes, defense contracts, and faction combat assignments.', bullets: ['Station mission agents', 'Faction combat contracts', 'Escort and defense missions', 'Pirate hunting assignments', 'Convoy interception', 'Rewards in Credits, loot, and reputation'] },
+  { title: 'Combat Sites + Pirate NPCs', tag: 'PIRATE FACTION PVE', icon: '☠', text: 'Combat sites are scannable space encounters filled with pirate faction NPCs, elite captains, rare spawns, and escalating rooms. Harder sites can drop rare modules, character gear materials, ship components, and pirate faction blueprint rewards.', bullets: ['Scannable combat anomalies', 'Pirate faction NPC fleets', 'Elite captain spawns', 'Escalating combat rooms', 'Rare loot tables', 'Pirate faction blueprint chances'] },
+  { title: 'PvP, Pirating + Security Status', tag: 'PLAYER CONFLICT', icon: '⚔', text: 'Ujura space is divided by security status. High-sec protects newer players and trade, low-sec introduces piracy, ambushes, and better rewards, while null-sec is lawless guild territory where players fight over routes, moons, gas fields, planets, outposts, and the Starcore. Ship destruction carries real risk because destroyed ships can drop loot that other players take.', bullets: ['High-sec safer missions and trade', 'Low-sec piracy and better loot', 'Null-sec full player warfare', 'Hauler ambushes and ransom gameplay', 'Destroyed ships can drop loot', 'Security status shapes risk and reward'] },
+  { title: 'Asteroid, Moon + Gas Harvesting', tag: 'RESOURCE ECONOMY', icon: '⌬', text: 'Ujura’s industrial economy starts in space. Players mine asteroid belts, harvest moon materials, scan and extract gas fields, then move those resources through dangerous routes into refining, manufacturing, markets, and war production.', bullets: ['Asteroid belt mining', 'Moon resource harvesting', 'Gas field scanning and extraction', 'Refining and hauling routes', 'Manufacturing supply chains', 'Resources create conflict'] },
+  { title: 'Planets Are Full Game Zones', tag: 'SPACE + GROUND LAYER', icon: '◈', text: 'Planets are a full second progression layer where players land, explore Dofus-style maps, fight mobs and bosses, enter Ancient Ruins and Raid Sites, collect loot, and extract everything back through space. Planet content can reward rare pirate faction ship blueprints along with weapons and gear for your character.', bullets: ['5–10 main zones per planet', '20–50+ effective areas', 'Ancient Ruins and Raid Sites', 'Rare pirate faction ship blueprints', 'Character weapons and gear', 'Loot must be extracted to ship'] },
+  { title: 'The Ujura Starcore', tag: 'ONE-OF-ONE WAR OBJECTIVE', icon: '✦', text: 'Only one Starcore exists at a time. It appears as a high-risk null-sec combat site, gets looted, then must be deployed at a star within 1 hour. Once deployed, every player receives a global announcement and the star becomes the main PvP battleground.', bullets: ['Only one active Starcore', 'Deploy at any null-sec star', '10-minute capture requirement', 'Rewards paid every 22 minutes', 'Active for 7–14 days', 'Control shifts through PvP'] },
+  { title: 'Blueprint NFT Economy', tag: 'PRODUCTION, NOT PAY-TO-WIN', icon: '▣', text: 'Master Original Blueprint NFTs give production rights for specific ships or items, but they do not create ships directly. Owners generate limited-use Blueprint Copies over time. Players still need resources, crafting time, and gameplay participation to produce the actual ships.', bullets: ['NFTs control production rights', 'Blueprint Copies are in-game only', 'Copies have limited crafting runs', 'Each race has each ship class', 'Scarcity lives at production level', 'Ships still enter PvP and economy'] },
+  { title: 'Founder Station Taxes', tag: 'REGIONAL MARKET OWNERSHIP', icon: '◉', text: 'Founder Capital Station NFT holders receive a 2–4% Credits tax on all market transactions in their race’s region. Credits are the main in-game currency used for trading, manufacturing, market purchases, and station commerce.', bullets: ['Credits are the main currency', '2–4% regional market tax', 'One station NFT per race', 'Applies to race regional markets', 'Station commerce matters', 'Markets become strategic assets'] }
 ];
 
 const nftStats = [
@@ -150,7 +151,7 @@ const ujuDetails = [
 ];
 
 const tokenUtility = [
-  'Governance voting rights on Ujuraâs game direction, economy decisions, balance proposals, faction updates, and future feature priorities',
+  'Governance voting rights on Ujura’s game direction, economy decisions, balance proposals, faction updates, and future feature priorities',
   'Access to cosmetic skins, visual upgrades, limited seasonal cosmetics, ship trails, faction-themed skins, station cosmetics, and profile cosmetics',
   'A share of future game revenue generated from Ujura NFT sales, subject to final legal structure and approved distribution mechanics',
   'Faster mining cycle time perks for miners, industrial players, and resource-focused guild operations',
@@ -187,6 +188,7 @@ function scrollToId(id) {
 }
 
 export default function App() {
+  const control = useSiteControl('ujura');
   const [activePage, setActivePage] = useState('home');
 
   function goHome() {
@@ -210,7 +212,7 @@ export default function App() {
       <header className="topbar">
         <div className="topbar-inner">
           <button className="brand" onClick={goHome}>
-            <span className="brand-mark">â</span>
+            <span className="brand-mark">◎</span>
             <span>
               <span className="brand-name">UJURA</span>
               <span className="brand-sub">Tactical Space MMO</span>
@@ -222,36 +224,53 @@ export default function App() {
             <button onClick={() => scrollHome('#systems')}>Security</button>
             <button onClick={() => scrollHome('#factions')}>Factions</button>
             <button onClick={() => scrollHome('#game-details')}>Details</button>
-            <button onClick={goNfts}>NFTs</button>
-            <button onClick={() => scrollHome('#seed')}>UJU Seed</button>
+            {control.toggles.nftSaleEnabled && <button onClick={goNfts}>NFTs</button>}
+            {control.toggles.seedSaleEnabled && <button onClick={() => scrollHome('#seed')}>UJU Seed</button>}
             <button onClick={() => scrollHome('#roadmap')}>Roadmap</button>
           </nav>
           <div className="topbar-actions">
-            <button className="sci-button ghost" onClick={() => scrollHome('#access')}>Play Alpha</button>
-            <button className="sci-button">Connect Wallet</button>
+            {control.toggles.alphaAccessEnabled && (
+              <button className="sci-button ghost" onClick={() => scrollHome('#access')}>{control.alpha.ctaLabel}</button>
+            )}
+            {control.toggles.walletButtonsEnabled && <button className="sci-button">Connect Wallet</button>}
           </div>
         </div>
       </header>
-      <main>{activePage === 'nfts' ? <NftSalesPage onBack={goHome} /> : <HomePage goNfts={goNfts} />}</main>
+      {control.statusBanner.enabled && control.statusBanner.text && (
+        <div className="control-banner">{control.statusBanner.text}</div>
+      )}
+      <main>{activePage === 'nfts' && control.toggles.nftSaleEnabled ? <NftSalesPage onBack={goHome} control={control} /> : <HomePage goNfts={goNfts} control={control} />}</main>
       <footer>
-        <p>Â© 2026 Ujura. All rights reserved.</p>
+        <p>© 2026 Ujura. All rights reserved.</p>
         <p>A tactical sci-fi world by Majori Games.</p>
       </footer>
     </div>
   );
 }
 
-function HomePage({ goNfts }) {
+function HomePage({ goNfts, control }) {
+  const primaryHref = control.hero.primaryCta.href || '#world';
+
+  function handlePrimaryClick() {
+    if (primaryHref.startsWith('#')) {
+      scrollToId(primaryHref);
+      return;
+    }
+    window.location.href = primaryHref;
+  }
+
   return (
     <>
       <section className="hero section-pad">
         <div className="hero-copy reveal">
-          <div className="badge">Pre-alpha concept now forming</div>
-          <h1>A player-owned tactical space MMO where ships, planets, blueprints, and guild wars all connect.</h1>
-          <p>Explore a player-owned galaxy of high-sec missions, low-sec piracy, null-sec warfare, pirate faction NPCs, combat sites, contested planets, Veil raid systems, and a player-driven economy built around production, destruction, ownership, governance, ship loss, dropped loot, and the one-of-one Starcore that turns the universe into a warzone.</p>
+          <div className="badge">{control.hero.badge}</div>
+          <h1>{control.hero.title}</h1>
+          <p>{control.hero.body}</p>
           <div className="button-row">
-            <button className="sci-button">Explore Ujura â</button>
-            <button className="sci-button ghost" onClick={goNfts}>View NFT Sale</button>
+            <button className="sci-button" onClick={handlePrimaryClick}>{control.hero.primaryCta.label} →</button>
+            {control.toggles.nftSaleEnabled && (
+              <button className="sci-button ghost" onClick={goNfts}>{control.hero.secondaryCta.label}</button>
+            )}
           </div>
           <div className="stats-row">
             <Stat value="1" label="Live Starcore" />
@@ -275,15 +294,15 @@ function HomePage({ goNfts }) {
       <SystemsSection />
       <FactionsSection />
       <GameDetailsSection />
-      <NftPreviewSection goNfts={goNfts} />
-      <SeedSection />
+      {control.toggles.nftSaleEnabled && <NftPreviewSection goNfts={goNfts} />}
+      {control.toggles.seedSaleEnabled && <SeedSection />}
       <RoadmapSection />
-      <AlphaSection />
+      {control.toggles.alphaAccessEnabled && <AlphaSection control={control} />}
     </>
   );
 }
 
-function NftSalesPage({ onBack }) {
+function NftSalesPage({ onBack, control }) {
   const [raceFilter, setRaceFilter] = useState('All');
   const [classFilter, setClassFilter] = useState('All');
 
@@ -299,11 +318,11 @@ function NftSalesPage({ onBack }) {
         <div className="hero-copy reveal">
           <div className="badge">Founder NFT Sale</div>
           <h1>Own production rights and founder station identity inside Ujura.</h1>
-          <p>The Ujura NFT sale includes 24 racial ship designs with 116 total Master Original Blueprint NFTs, 10 Mining Barge Master Original Blueprints, and four Founder Capital Station NFTs for Nexari, Korrath, Veyra, and Valthorak. Founder Capital Station holders earn a 2â4% Credits tax on all market transactions in their raceâs region.</p>
+          <p>The Ujura NFT sale includes 24 racial ship designs with 116 total Master Original Blueprint NFTs, 10 Mining Barge Master Original Blueprints, and four Founder Capital Station NFTs for Nexari, Korrath, Veyra, and Valthorak. Founder Capital Station holders earn a 2–4% Credits tax on all market transactions in their race’s region.</p>
           <div className="button-row">
-            <button className="sci-button">Connect Wallet</button>
+            {control.toggles.walletButtonsEnabled && <button className="sci-button">Connect Wallet</button>}
             <button className="sci-button ghost">View Sale Terms</button>
-            <button className="text-link" onClick={onBack}>â Back to Site</button>
+            <button className="text-link" onClick={onBack}>← Back to Site</button>
           </div>
         </div>
         <NftSaleHud />
@@ -335,7 +354,7 @@ function NftSalesPage({ onBack }) {
       </section>
 
       <section className="section-pad">
-        <SectionHeader eyebrow="Founder Capital Stations" title="Four Founder Capital Station NFTs." text="Each race has one named capital station NFT. The holder earns a 2â4% Credits tax on every market transaction in that raceâs regional economy. Credits are the main in-game currency." />
+        <SectionHeader eyebrow="Founder Capital Stations" title="Four Founder Capital Station NFTs." text="Each race has one named capital station NFT. The holder earns a 2–4% Credits tax on every market transaction in that race’s regional economy. Credits are the main in-game currency." />
         <div className="card-grid four">{founderStationNFTs.map((drop) => <StationCard key={drop.name} drop={drop} />)}</div>
       </section>
 
@@ -343,10 +362,10 @@ function NftSalesPage({ onBack }) {
         <div className="panel big-panel">
           <p className="eyebrow">How It Works</p>
           <h2>NFTs control production and regional market ownership.</h2>
-          <p className="muted big">A Master Original Blueprint NFT generates limited-use Blueprint Copies over time. Founder Capital Station NFTs collect a 2â4% Credits tax from market transactions in their raceâs region. Credits are the main in-game currency used for trading, manufacturing, station commerce, and player-to-player markets.</p>
+          <p className="muted big">A Master Original Blueprint NFT generates limited-use Blueprint Copies over time. Founder Capital Station NFTs collect a 2–4% Credits tax from market transactions in their race’s region. Credits are the main in-game currency used for trading, manufacturing, station commerce, and player-to-player markets.</p>
         </div>
         <div className="mini-grid">
-          {['Own Master Original Blueprint NFT', 'Generate limited Blueprint Copies', 'Gather resources through gameplay', 'Craft ships/items in-game', 'Use Credits as the main in-game currency', 'Founder Stations earn 2â4% regional market tax', 'Ship loss and loot drops create demand', 'Destruction keeps the economy alive'].map((item) => <MiniLine key={item}>{item}</MiniLine>)}
+          {['Own Master Original Blueprint NFT', 'Generate limited Blueprint Copies', 'Gather resources through gameplay', 'Craft ships/items in-game', 'Use Credits as the main in-game currency', 'Founder Stations earn 2–4% regional market tax', 'Ship loss and loot drops create demand', 'Destruction keeps the economy alive'].map((item) => <MiniLine key={item}>{item}</MiniLine>)}
         </div>
       </section>
     </>
@@ -404,7 +423,7 @@ function GameDetailsSection() {
 
 function NftPreviewSection({ goNfts }) {
   const previewDrops = [blueprintNFTs[0], blueprintNFTs[7], blueprintNFTs[14], miningBlueprint];
-  return <section id="nfts" className="section-pad"><SectionHeader eyebrow="NFT Sale" title="130 total NFTs power production and regional market ownership." text="The dedicated NFT page includes 116 racial ship Master Original Blueprint NFTs, 10 Mining Barge Master Original Blueprints, and 4 Founder Capital Station NFTs that earn 2â4% Credits tax in their raceâs region." /><div className="stats-row five">{nftStats.map((stat) => <Stat key={stat.label} value={stat.value} label={stat.label} />)}</div><div className="card-grid four preview-cards">{previewDrops.map((drop) => <NftCard key={drop.name} drop={drop} compact />)}</div><div className="center"><button className="sci-button" onClick={goNfts}>Open NFT Sales Page</button></div></section>;
+  return <section id="nfts" className="section-pad"><SectionHeader eyebrow="NFT Sale" title="130 total NFTs power production and regional market ownership." text="The dedicated NFT page includes 116 racial ship Master Original Blueprint NFTs, 10 Mining Barge Master Original Blueprints, and 4 Founder Capital Station NFTs that earn 2–4% Credits tax in their race’s region." /><div className="stats-row five">{nftStats.map((stat) => <Stat key={stat.label} value={stat.value} label={stat.label} />)}</div><div className="card-grid four preview-cards">{previewDrops.map((drop) => <NftCard key={drop.name} drop={drop} compact />)}</div><div className="center"><button className="sci-button" onClick={goNfts}>Open NFT Sales Page</button></div></section>;
 }
 
 function SeedSection() {
@@ -412,19 +431,19 @@ function SeedSection() {
 }
 
 function DistributionBars() {
-  return <div className="distribution"><p className="eyebrow">UJU Distribution</p>{ujuDistribution.map((item) => <div className="dist-row" key={item.name}><div className="dist-label"><span><b>{item.name}</b><small>{item.amount} Â· {item.note}</small></span><strong>{item.percent}%</strong></div><div className="progress"><span style={{ width: `${item.percent}%` }} /></div></div>)}<p className="eyebrow utility-title">UJU Utility</p><div className="mini-grid utility-list">{tokenUtility.map((item) => <MiniLine key={item}>{item}</MiniLine>)}</div></div>;
+  return <div className="distribution"><p className="eyebrow">UJU Distribution</p>{ujuDistribution.map((item) => <div className="dist-row" key={item.name}><div className="dist-label"><span><b>{item.name}</b><small>{item.amount} · {item.note}</small></span><strong>{item.percent}%</strong></div><div className="progress"><span style={{ width: `${item.percent}%` }} /></div></div>)}<p className="eyebrow utility-title">UJU Utility</p><div className="mini-grid utility-list">{tokenUtility.map((item) => <MiniLine key={item}>{item}</MiniLine>)}</div></div>;
 }
 
 function SeedCheckout() {
-  return <div className="panel checkout"><p className="eyebrow">Buy UJU</p><h2>Public Seed Checkout</h2><p className="muted">The public seed round is 10% of supply: 800,000 UJU at $0.05 per coin. Public sale later is 15% of supply: 1,200,000 UJU at $0.10 per coin.</p><div className="price-pair"><div><small>Public Seed Round</small><b>$0.05</b><span>800,000 UJU Â· 10%</span></div><div><small>Public Sale</small><b>$0.10</b><span>1,200,000 UJU Â· 15%</span></div></div>{seedPackages.map((pack) => <button className="allocation" key={pack.tag}><span><small>{pack.tag}</small><b>{pack.amount}</b></span><strong>{pack.price}</strong></button>)}<div className="input-box"><small>Custom UJU Amount</small><div><input placeholder="50,000" /><span>UJU</span></div><p><span>Estimated cost</span><b>$2,500.00</b></p></div><div className="button-row"><button className="sci-button">Connect Wallet</button><button className="sci-button ghost">Purchase UJU</button></div><p className="disclaimer">Legal review, KYC/AML, smart contract audits, jurisdiction rules, vesting, revenue-share eligibility, and risk disclosures are required before any real sale or NFT revenue-sharing mechanism.</p></div>;
+  return <div className="panel checkout"><p className="eyebrow">Buy UJU</p><h2>Public Seed Checkout</h2><p className="muted">The public seed round is 10% of supply: 800,000 UJU at $0.05 per coin. Public sale later is 15% of supply: 1,200,000 UJU at $0.10 per coin.</p><div className="price-pair"><div><small>Public Seed Round</small><b>$0.05</b><span>800,000 UJU · 10%</span></div><div><small>Public Sale</small><b>$0.10</b><span>1,200,000 UJU · 15%</span></div></div>{seedPackages.map((pack) => <button className="allocation" key={pack.tag}><span><small>{pack.tag}</small><b>{pack.amount}</b></span><strong>{pack.price}</strong></button>)}<div className="input-box"><small>Custom UJU Amount</small><div><input placeholder="50,000" /><span>UJU</span></div><p><span>Estimated cost</span><b>$2,500.00</b></p></div><div className="button-row"><button className="sci-button">Connect Wallet</button><button className="sci-button ghost">Purchase UJU</button></div><p className="disclaimer">Legal review, KYC/AML, smart contract audits, jurisdiction rules, vesting, revenue-share eligibility, and risk disclosures are required before any real sale or NFT revenue-sharing mechanism.</p></div>;
 }
 
 function RoadmapSection() {
   return <section id="roadmap" className="section-pad"><SectionHeader eyebrow="Roadmap" title="Building Ujura in phases." text="A believable path from concept to playable world, with each phase adding more of the economy, ownership, combat, and territorial warfare layer." /><div className="card-grid three">{roadmap.map((item) => <div className="panel" key={item.phase}><p className="eyebrow">{item.phase}</p><h3>{item.title}</h3><p className="muted">{item.text}</p></div>)}</div></section>;
 }
 
-function AlphaSection() {
-  return <section id="access" className="alpha-section"><div className="alpha-icon">â¦</div><h2>Enter the first gate.</h2><p>Get early alpha access for concept art, faction reveals, ship drops, dev logs, blueprint launches, seed round updates, and pre-alpha play windows.</p><button className="sci-button">Play Alpha</button></section>;
+function AlphaSection({ control }) {
+  return <section id="access" className="alpha-section"><div className="alpha-icon">✦</div><h2>{control.alpha.title}</h2><p>{control.alpha.body}</p><button className="sci-button">{control.alpha.ctaLabel}</button></section>;
 }
 
 function NftCard({ drop, compact = false }) {
@@ -456,11 +475,11 @@ function SystemCard({ system }) {
 }
 
 function Feature({ children }) {
-  return <div className="feature"><span>â</span>{children}</div>;
+  return <div className="feature"><span>◆</span>{children}</div>;
 }
 
 function MiniLine({ children }) {
-  return <div className="mini-line"><span>â</span>{children}</div>;
+  return <div className="mini-line"><span>◆</span>{children}</div>;
 }
 
 function Stat({ value, label, caption }) {
@@ -474,4 +493,3 @@ function SectionHeader({ eyebrow, title, text }) {
 function OrbitNode({ className = '', pulse = false }) {
   return <div className={`orbit-node ${className}`}>{pulse && <span className="pulse" />}<i /></div>;
 }
-
