@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from 'react';
+import AuthModal from './auth/AuthModal';
+import { useSharedAuth } from './auth/sharedAuth';
 import { useSiteControl } from './useSiteControl';
 
 const raceNames = ['Nexari', 'Korrath', 'Veyra', 'Valthorak'];
@@ -189,7 +191,9 @@ function scrollToId(id) {
 
 export default function App() {
   const control = useSiteControl('ujura');
+  const auth = useSharedAuth();
   const [activePage, setActivePage] = useState('home');
+  const [authOpen, setAuthOpen] = useState(false);
 
   function goHome() {
     setActivePage('home');
@@ -230,25 +234,36 @@ export default function App() {
           </nav>
           <div className="topbar-actions">
             {control.toggles.alphaAccessEnabled && (
-              <button className="sci-button ghost" onClick={() => scrollHome('#access')}>{control.alpha.ctaLabel}</button>
+              <button className="sci-button ghost" onClick={() => setAuthOpen(true)}>{control.alpha.ctaLabel}</button>
             )}
-            {control.toggles.walletButtonsEnabled && <button className="sci-button">Connect Wallet</button>}
+            {control.toggles.walletButtonsEnabled && (
+              <button className="sci-button" onClick={() => setAuthOpen(true)}>
+                {auth.user ? auth.user.email || 'Account' : 'Connect Wallet'}
+              </button>
+            )}
           </div>
         </div>
       </header>
       {control.statusBanner.enabled && control.statusBanner.text && (
         <div className="control-banner">{control.statusBanner.text}</div>
       )}
-      <main>{activePage === 'nfts' && control.toggles.nftSaleEnabled ? <NftSalesPage onBack={goHome} control={control} /> : <HomePage goNfts={goNfts} control={control} />}</main>
+      <main>{activePage === 'nfts' && control.toggles.nftSaleEnabled ? <NftSalesPage onBack={goHome} control={control} onAuthOpen={() => setAuthOpen(true)} /> : <HomePage goNfts={goNfts} control={control} onAuthOpen={() => setAuthOpen(true)} />}</main>
       <footer>
         <p>© 2026 Ujura. All rights reserved.</p>
         <p>A tactical sci-fi world by Majori Games.</p>
       </footer>
+      <AuthModal
+        open={authOpen}
+        onClose={() => setAuthOpen(false)}
+        onAuthenticated={auth.refresh}
+        user={auth.user}
+        signOut={auth.signOut}
+      />
     </div>
   );
 }
 
-function HomePage({ goNfts, control }) {
+function HomePage({ goNfts, control, onAuthOpen }) {
   const primaryHref = control.hero.primaryCta.href || '#world';
 
   function handlePrimaryClick() {
@@ -295,14 +310,14 @@ function HomePage({ goNfts, control }) {
       <FactionsSection />
       <GameDetailsSection />
       {control.toggles.nftSaleEnabled && <NftPreviewSection goNfts={goNfts} />}
-      {control.toggles.seedSaleEnabled && <SeedSection />}
+      {control.toggles.seedSaleEnabled && <SeedSection onAuthOpen={onAuthOpen} />}
       <RoadmapSection />
-      {control.toggles.alphaAccessEnabled && <AlphaSection control={control} />}
+      {control.toggles.alphaAccessEnabled && <AlphaSection control={control} onAuthOpen={onAuthOpen} />}
     </>
   );
 }
 
-function NftSalesPage({ onBack, control }) {
+function NftSalesPage({ onBack, control, onAuthOpen }) {
   const [raceFilter, setRaceFilter] = useState('All');
   const [classFilter, setClassFilter] = useState('All');
 
@@ -320,7 +335,7 @@ function NftSalesPage({ onBack, control }) {
           <h1>Own production rights and founder station identity inside Ujura.</h1>
           <p>The Ujura NFT sale includes 24 racial ship designs with 116 total Master Original Blueprint NFTs, 10 Mining Barge Master Original Blueprints, and four Founder Capital Station NFTs for Nexari, Korrath, Veyra, and Valthorak. Founder Capital Station holders earn a 2–4% Credits tax on all market transactions in their race’s region.</p>
           <div className="button-row">
-            {control.toggles.walletButtonsEnabled && <button className="sci-button">Connect Wallet</button>}
+            {control.toggles.walletButtonsEnabled && <button className="sci-button" onClick={onAuthOpen}>Connect Wallet</button>}
             <button className="sci-button ghost">View Sale Terms</button>
             <button className="text-link" onClick={onBack}>← Back to Site</button>
           </div>
@@ -426,24 +441,24 @@ function NftPreviewSection({ goNfts }) {
   return <section id="nfts" className="section-pad"><SectionHeader eyebrow="NFT Sale" title="130 total NFTs power production and regional market ownership." text="The dedicated NFT page includes 116 racial ship Master Original Blueprint NFTs, 10 Mining Barge Master Original Blueprints, and 4 Founder Capital Station NFTs that earn 2–4% Credits tax in their race’s region." /><div className="stats-row five">{nftStats.map((stat) => <Stat key={stat.label} value={stat.value} label={stat.label} />)}</div><div className="card-grid four preview-cards">{previewDrops.map((drop) => <NftCard key={drop.name} drop={drop} compact />)}</div><div className="center"><button className="sci-button" onClick={goNfts}>Open NFT Sales Page</button></div></section>;
 }
 
-function SeedSection() {
-  return <section id="seed" className="section-pad"><SectionHeader eyebrow="UJU Tokenomics" title="Seed round: $0.05 per UJU. Public sale: $0.10 per UJU." text="UJU is the ownership and governance layer for the player-owned Ujura economy, with planned access to a share of future game revenue from NFT sales. It has an 8,000,000 max supply." /><div className="token-grid"><div className="panel"><div className="token-head"><div><p className="eyebrow">Token Overview</p><h2>UJU Coin</h2><p className="muted">UJU holders can vote on game direction, access cosmetics, receive in-game perks like faster mining cycle time, faster skill training, less market transaction fees, and are planned to receive a share of future NFT revenue subject to final legal structure.</p></div><div className="uju-mark">UJU</div></div><div className="stats-row token-stats">{ujuDetails.map((item) => <Stat key={item.label} value={item.value} label={item.label} caption={item.caption} />)}</div><DistributionBars /></div><SeedCheckout /></div></section>;
+function SeedSection({ onAuthOpen }) {
+  return <section id="seed" className="section-pad"><SectionHeader eyebrow="UJU Tokenomics" title="Seed round: $0.05 per UJU. Public sale: $0.10 per UJU." text="UJU is the ownership and governance layer for the player-owned Ujura economy, with planned access to a share of future game revenue from NFT sales. It has an 8,000,000 max supply." /><div className="token-grid"><div className="panel"><div className="token-head"><div><p className="eyebrow">Token Overview</p><h2>UJU Coin</h2><p className="muted">UJU holders can vote on game direction, access cosmetics, receive in-game perks like faster mining cycle time, faster skill training, less market transaction fees, and are planned to receive a share of future NFT revenue subject to final legal structure.</p></div><div className="uju-mark">UJU</div></div><div className="stats-row token-stats">{ujuDetails.map((item) => <Stat key={item.label} value={item.value} label={item.label} caption={item.caption} />)}</div><DistributionBars /></div><SeedCheckout onAuthOpen={onAuthOpen} /></div></section>;
 }
 
 function DistributionBars() {
   return <div className="distribution"><p className="eyebrow">UJU Distribution</p>{ujuDistribution.map((item) => <div className="dist-row" key={item.name}><div className="dist-label"><span><b>{item.name}</b><small>{item.amount} · {item.note}</small></span><strong>{item.percent}%</strong></div><div className="progress"><span style={{ width: `${item.percent}%` }} /></div></div>)}<p className="eyebrow utility-title">UJU Utility</p><div className="mini-grid utility-list">{tokenUtility.map((item) => <MiniLine key={item}>{item}</MiniLine>)}</div></div>;
 }
 
-function SeedCheckout() {
-  return <div className="panel checkout"><p className="eyebrow">Buy UJU</p><h2>Public Seed Checkout</h2><p className="muted">The public seed round is 10% of supply: 800,000 UJU at $0.05 per coin. Public sale later is 15% of supply: 1,200,000 UJU at $0.10 per coin.</p><div className="price-pair"><div><small>Public Seed Round</small><b>$0.05</b><span>800,000 UJU · 10%</span></div><div><small>Public Sale</small><b>$0.10</b><span>1,200,000 UJU · 15%</span></div></div>{seedPackages.map((pack) => <button className="allocation" key={pack.tag}><span><small>{pack.tag}</small><b>{pack.amount}</b></span><strong>{pack.price}</strong></button>)}<div className="input-box"><small>Custom UJU Amount</small><div><input placeholder="50,000" /><span>UJU</span></div><p><span>Estimated cost</span><b>$2,500.00</b></p></div><div className="button-row"><button className="sci-button">Connect Wallet</button><button className="sci-button ghost">Purchase UJU</button></div><p className="disclaimer">Legal review, KYC/AML, smart contract audits, jurisdiction rules, vesting, revenue-share eligibility, and risk disclosures are required before any real sale or NFT revenue-sharing mechanism.</p></div>;
+function SeedCheckout({ onAuthOpen }) {
+  return <div className="panel checkout"><p className="eyebrow">Buy UJU</p><h2>Public Seed Checkout</h2><p className="muted">The public seed round is 10% of supply: 800,000 UJU at $0.05 per coin. Public sale later is 15% of supply: 1,200,000 UJU at $0.10 per coin.</p><div className="price-pair"><div><small>Public Seed Round</small><b>$0.05</b><span>800,000 UJU · 10%</span></div><div><small>Public Sale</small><b>$0.10</b><span>1,200,000 UJU · 15%</span></div></div>{seedPackages.map((pack) => <button className="allocation" key={pack.tag}><span><small>{pack.tag}</small><b>{pack.amount}</b></span><strong>{pack.price}</strong></button>)}<div className="input-box"><small>Custom UJU Amount</small><div><input placeholder="50,000" /><span>UJU</span></div><p><span>Estimated cost</span><b>$2,500.00</b></p></div><div className="button-row"><button className="sci-button" onClick={onAuthOpen}>Connect Wallet</button><button className="sci-button ghost" onClick={onAuthOpen}>Purchase UJU</button></div><p className="disclaimer">Legal review, KYC/AML, smart contract audits, jurisdiction rules, vesting, revenue-share eligibility, and risk disclosures are required before any real sale or NFT revenue-sharing mechanism.</p></div>;
 }
 
 function RoadmapSection() {
   return <section id="roadmap" className="section-pad"><SectionHeader eyebrow="Roadmap" title="Building Ujura in phases." text="A believable path from concept to playable world, with each phase adding more of the economy, ownership, combat, and territorial warfare layer." /><div className="card-grid three">{roadmap.map((item) => <div className="panel" key={item.phase}><p className="eyebrow">{item.phase}</p><h3>{item.title}</h3><p className="muted">{item.text}</p></div>)}</div></section>;
 }
 
-function AlphaSection({ control }) {
-  return <section id="access" className="alpha-section"><div className="alpha-icon">✦</div><h2>{control.alpha.title}</h2><p>{control.alpha.body}</p><button className="sci-button">{control.alpha.ctaLabel}</button></section>;
+function AlphaSection({ control, onAuthOpen }) {
+  return <section id="access" className="alpha-section"><div className="alpha-icon">✦</div><h2>{control.alpha.title}</h2><p>{control.alpha.body}</p><button className="sci-button" onClick={onAuthOpen}>{control.alpha.ctaLabel}</button></section>;
 }
 
 function NftCard({ drop, compact = false }) {
