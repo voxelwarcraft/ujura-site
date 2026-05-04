@@ -159,6 +159,21 @@ button { cursor: pointer; }
 .alpha-section { max-width: 900px; margin: 0 auto; padding: 96px 24px; text-align: center; }
 .alpha-icon { font-size: 40px; color: var(--blue); margin-bottom: 18px; }
 .alpha-section p { max-width: 660px; margin: 22px auto 34px; color: rgba(255,255,255,.65); line-height: 1.75; font-size: 18px; }
+.blog-card { border: 1px solid var(--line); background: var(--panel); border-radius: 24px; overflow: hidden; box-shadow: 0 0 44px rgba(79,163,183,.08); transition: transform .22s, border-color .22s, box-shadow .22s; }
+.blog-card:hover { transform: translateY(-3px); border-color: rgba(141,219,236,.46); box-shadow: 0 0 58px rgba(79,163,183,.16); }
+.blog-art { min-height: 220px; position: relative; border-bottom: 1px solid var(--line); }
+.blog-art:before { content: ''; position: absolute; inset: 0; opacity: .18; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px); background-size: 34px 34px; }
+.blog-art span { position: absolute; left: 18px; top: 18px; z-index: 1; border: 1px solid rgba(79,163,183,.3); background: rgba(0,0,0,.36); color: var(--blue2); padding: 8px 10px; text-transform: uppercase; letter-spacing: .16em; font-size: 10px; clip-path: polygon(7px 0,100% 0,100% calc(100% - 7px),calc(100% - 7px) 100%,0 100%,0 7px); }
+.blog-body { padding: 22px; }
+.blog-body h3 { margin: 10px 0 12px; font-size: 24px; line-height: 1.05; }
+.blog-body p { color: rgba(255,255,255,.6); line-height: 1.7; }
+.blog-meta { display: flex; flex-wrap: wrap; gap: 10px; color: var(--blue2); text-transform: uppercase; letter-spacing: .15em; font-size: 10px; font-weight: 800; }
+.blog-modal { position: fixed; inset: 0; z-index: 60; overflow-y: auto; background: rgba(0,0,0,.78); padding: 28px 16px; backdrop-filter: blur(18px); }
+.blog-modal-card { max-width: 920px; margin: 0 auto; overflow: hidden; border: 1px solid var(--line-strong); background: #06101a; border-radius: 28px; box-shadow: 0 30px 100px rgba(0,0,0,.55), 0 0 80px rgba(79,163,183,.18); }
+.blog-modal-art { min-height: 300px; border-bottom: 1px solid var(--line); }
+.blog-modal-body { padding: 32px; }
+.blog-modal-body h2 { margin: 16px 0; font-size: clamp(34px, 5vw, 62px); line-height: .95; letter-spacing: -.055em; }
+.blog-fulltext { margin: 28px 0; color: rgba(255,255,255,.72); line-height: 1.85; white-space: pre-line; }
 footer { max-width: 1280px; margin: 0 auto; padding: 28px 24px; border-top: 1px solid rgba(255,255,255,.1); display: flex; justify-content: space-between; gap: 16px; color: rgba(255,255,255,.45); font-size: 14px; }
 
 .reveal { animation: rise .7s ease both; }

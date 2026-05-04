@@ -189,6 +189,33 @@ const roadmap = [
   { phase: 'Phase 06', title: 'Industry + Territory', text: 'Add asteroid mining, moon harvesting, gas field extraction, manufacturing, orbital control, ground exploration, outposts, planetary PvP, and territory warfare.' }
 ];
 
+function getPublishedPosts(blog) {
+  return (blog?.posts || [])
+    .filter((post) => post.status === 'published')
+    .sort((a, b) => {
+      if (a.featured !== b.featured) return a.featured ? -1 : 1;
+      return String(b.publishedAt || '').localeCompare(String(a.publishedAt || ''));
+    });
+}
+
+function blogArtStyle(post) {
+  if (post.imageUrl) {
+    return {
+      backgroundImage: `linear-gradient(rgba(0,0,0,.16), rgba(0,0,0,.28)), url("${post.imageUrl}")`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center'
+    };
+  }
+  return { background: post.imageStyle || 'radial-gradient(circle at center, rgba(79,163,183,.3), transparent 34%), linear-gradient(135deg, rgba(79,163,183,.12), rgba(255,255,255,.02))' };
+}
+
+function formatPostDate(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
 function scrollToId(id) {
   document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
 }
@@ -234,6 +261,7 @@ export default function App() {
             <button onClick={() => scrollHome('#game-details')}>Details</button>
             {control.toggles.nftSaleEnabled && <button onClick={goNfts}>NFTs</button>}
             {control.toggles.seedSaleEnabled && <button onClick={() => scrollHome('#seed')}>UJU Seed</button>}
+            {control.blog?.enabled && <button onClick={() => scrollHome('#blog')}>Blog</button>}
             <button onClick={() => scrollHome('#roadmap')}>Roadmap</button>
           </nav>
           <div className="topbar-actions">
@@ -269,6 +297,7 @@ export default function App() {
 
 function HomePage({ goNfts, control, onAuthOpen }) {
   const primaryHref = control.hero.primaryCta.href || '#world';
+  const [activePost, setActivePost] = useState(null);
 
   function handlePrimaryClick() {
     if (primaryHref.startsWith('#')) {
@@ -315,8 +344,10 @@ function HomePage({ goNfts, control, onAuthOpen }) {
       <GameDetailsSection />
       {control.toggles.nftSaleEnabled && <NftPreviewSection goNfts={goNfts} />}
       {control.toggles.seedSaleEnabled && <SeedSection onAuthOpen={onAuthOpen} />}
+      {control.blog?.enabled && <BlogSection blog={control.blog} onOpenPost={setActivePost} />}
       <RoadmapSection />
       {control.toggles.alphaAccessEnabled && <AlphaSection control={control} onAuthOpen={onAuthOpen} />}
+      <BlogModal post={activePost} onClose={() => setActivePost(null)} />
     </>
   );
 }
@@ -514,8 +545,58 @@ function RoadmapSection() {
   return <section id="roadmap" className="section-pad"><SectionHeader eyebrow="Roadmap" title="Building Ujura in phases." text="A believable path from concept to playable world, with each phase adding more of the economy, ownership, combat, and territorial warfare layer." /><div className="card-grid three">{roadmap.map((item) => <div className="panel" key={item.phase}><p className="eyebrow">{item.phase}</p><h3>{item.title}</h3><p className="muted">{item.text}</p></div>)}</div></section>;
 }
 
+function BlogSection({ blog, onOpenPost }) {
+  const posts = getPublishedPosts(blog);
+  if (posts.length === 0) return null;
+  return (
+    <section id="blog" className="section-pad">
+      <SectionHeader eyebrow={blog.eyebrow || 'Transmission Log'} title={blog.title || 'Ujura updates from the frontier.'} text={blog.intro || 'Development notes and announcements from Ujura.'} />
+      <div className="card-grid three">
+        {posts.map((post) => (
+          <article className="blog-card" key={post.id || post.slug || post.title}>
+            <div className="blog-art" style={blogArtStyle(post)}>
+              <span>{post.category}</span>
+            </div>
+            <div className="blog-body">
+              <div className="blog-meta">
+                {post.publishedAt && <span>{formatPostDate(post.publishedAt)}</span>}
+                {post.featured && <span>Featured</span>}
+              </div>
+              <h3>{post.title}</h3>
+              <p>{post.excerpt}</p>
+              <button className="text-link" onClick={() => onOpenPost(post)}>Read Transmission</button>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function AlphaSection({ control, onAuthOpen }) {
   return <section id="access" className="alpha-section"><div className="alpha-icon">✦</div><h2>{control.alpha.title}</h2><p>{control.alpha.body}</p><button className="sci-button" onClick={onAuthOpen}>{control.alpha.ctaLabel}</button></section>;
+}
+
+function BlogModal({ post, onClose }) {
+  if (!post) return null;
+  return (
+    <div className="blog-modal">
+      <article className="blog-modal-card">
+        <div className="blog-modal-art" style={blogArtStyle(post)} />
+        <div className="blog-modal-body">
+          <div className="blog-meta">
+            <span>{post.category}</span>
+            {post.publishedAt && <span>{formatPostDate(post.publishedAt)}</span>}
+            {post.author && <span>By {post.author}</span>}
+          </div>
+          <h2>{post.title}</h2>
+          <p className="muted big">{post.excerpt}</p>
+          <div className="blog-fulltext">{post.body}</div>
+          <button className="sci-button" onClick={onClose}>Close Transmission</button>
+        </div>
+      </article>
+    </div>
+  );
 }
 
 function NftCard({ drop, compact = false, onBuy, purchase, marketplaceReady = false }) {
