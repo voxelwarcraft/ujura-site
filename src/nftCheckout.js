@@ -1,5 +1,7 @@
-import { Connection, Transaction } from "@solana/web3.js";
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction } from "@solana/web3.js";
 import { AUTH_API_BASE, authFetch, getSolanaProvider, walletAuth } from "./auth/sharedAuth";
+
+const MEMO_PROGRAM_ID = new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
 
 export async function fetchNftCatalog() {
   const response = await fetch(`${AUTH_API_BASE}/api/nft/catalog`, { cache: "no-store" });
@@ -23,9 +25,9 @@ export async function buyNftWithWallet({ itemId, providerName, onAuthenticated }
     body: JSON.stringify({ itemId, walletAddress }),
   });
 
-  const transaction = Transaction.from(base64ToBytes(checkout.transaction));
-  const signed = await provider.signTransaction(transaction);
   const connection = new Connection(checkout.rpcUrl, "confirmed");
+  const transaction = await buildPaymentTransaction({ checkout, walletAddress, connection });
+  const signed = await provider.signTransaction(transaction);
   const signature = await connection.sendRawTransaction(signed.serialize(), { skipPreflight: false });
   await connection.confirmTransaction(signature, "confirmed");
 
@@ -37,9 +39,20 @@ export async function buyNftWithWallet({ itemId, providerName, onAuthenticated }
   return { ...confirmed, signature };
 }
 
-function base64ToBytes(value) {
-  const binary = window.atob(value);
-  const bytes = new Uint8Array(binary.length);
-  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
-  return bytes;
+async function buildPaymentTransaction({ checkout, walletAddress, connection }) {
+  const latest = await connection.getLatestBlockhash("confirmed");
+  const fromPubkey = new PublicKey(walletAddress);
+  const treasuryPubkey = new PublicKey(checkout.treasuryWallet);
+  const transaction = new Transaction({ feePayer: fromPubkey, recentBlockhash: latest.blockhash });
+  transaction.add(SystemProgram.transfer({
+    fromPubkey,
+    toPubkey: treasuryPubkey,
+    lamports: checkout.order.priceLamports,
+  }));
+  transaction.add(new TransactionInstruction({
+    keys: [],
+    programId: MEMO_PROGRAM_ID,
+    data: new TextEncoder().encode(checkout.order.memo),
+  }));
+  return transaction;
 }
