@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import AuthModal from './auth/AuthModal';
 import { useSharedAuth } from './auth/sharedAuth';
+import { buyNftWithWallet, fetchNftCatalog } from './nftCheckout';
 import { useSiteControl } from './useSiteControl';
 
 const raceNames = ['Nexari', 'Korrath', 'Veyra', 'Valthorak'];
@@ -32,6 +33,7 @@ const shipClassData = {
 const blueprintNFTs = raceNames.flatMap((race) => shipClasses.map((shipClass) => {
   const data = shipClassData[shipClass];
   return {
+    id: `blueprint-${race}-${shipClass}`.toLowerCase(),
     name: `${shipNamesByRace[race][shipClass]} Master Blueprint`,
     race,
     shipClass,
@@ -49,6 +51,7 @@ const blueprintNFTs = raceNames.flatMap((race) => shipClasses.map((shipClass) =>
 }));
 
 const miningBlueprint = {
+  id: 'blueprint-independent-mining-barge',
   name: 'Mining Barge Master Blueprint',
   race: 'Independent',
   shipClass: 'Mining Barge',
@@ -64,6 +67,7 @@ const miningBlueprint = {
 };
 
 const founderStationNFTs = raceNames.map((race) => ({
+  id: `station-${race}`.toLowerCase(),
   name: `${stationNamesByRace[race]} Founder Capital Station`,
   race,
   stationName: stationNamesByRace[race],
@@ -318,14 +322,63 @@ function HomePage({ goNfts, control, onAuthOpen }) {
 }
 
 function NftSalesPage({ onBack, control, onAuthOpen }) {
+  const auth = useSharedAuth();
   const [raceFilter, setRaceFilter] = useState('All');
   const [classFilter, setClassFilter] = useState('All');
+  const [catalogState, setCatalogState] = useState({ settings: { saleConfigured: false }, items: [] });
+  const [catalogNotice, setCatalogNotice] = useState('');
+  const [purchaseState, setPurchaseState] = useState({});
+
+  async function loadCatalog() {
+    try {
+      const nextCatalog = await fetchNftCatalog();
+      setCatalogState(nextCatalog);
+      setCatalogNotice(nextCatalog.settings.saleConfigured ? '' : 'Solana checkout is installed, but the treasury wallet is not configured yet.');
+    } catch (error) {
+      setCatalogNotice(error.message);
+    }
+  }
+
+  useEffect(() => {
+    loadCatalog();
+  }, []);
+
+  const liveItems = useMemo(() => new Map((catalogState.items || []).map((item) => [item.id, item])), [catalogState.items]);
+
+  function withLiveInventory(drop) {
+    const live = liveItems.get(drop.id);
+    if (!live) return drop;
+    return { ...drop, ...live, price: live.price || drop.price, remaining: live.remaining };
+  }
 
   const filteredBlueprints = useMemo(() => blueprintNFTs.filter((drop) => {
     const raceMatch = raceFilter === 'All' || drop.race === raceFilter;
     const classMatch = classFilter === 'All' || drop.shipClass === classFilter;
     return raceMatch && classMatch;
-  }), [raceFilter, classFilter]);
+  }).map(withLiveInventory), [raceFilter, classFilter, liveItems]);
+
+  async function handleBuy(drop, providerName) {
+    setPurchaseState((current) => ({ ...current, [drop.id]: { busy: true, message: `Opening ${providerName === 'solflare' ? 'Solflare' : 'Phantom'}...` } }));
+    try {
+      const result = await buyNftWithWallet({
+        itemId: drop.id,
+        providerName,
+        onAuthenticated: auth.refresh,
+      });
+      setPurchaseState((current) => ({
+        ...current,
+        [drop.id]: {
+          busy: false,
+          message: `Payment confirmed. Order ${result.order.id} now holds your blueprint entitlement. Future NFT delivery will be tracked in the backend.`,
+        },
+      }));
+      await loadCatalog();
+    } catch (error) {
+      setPurchaseState((current) => ({ ...current, [drop.id]: { busy: false, message: error.message } }));
+    }
+  }
+
+  const marketplaceReady = Boolean(catalogState.settings?.saleConfigured);
 
   return (
     <>
@@ -339,6 +392,7 @@ function NftSalesPage({ onBack, control, onAuthOpen }) {
             <button className="sci-button ghost">View Sale Terms</button>
             <button className="text-link" onClick={onBack}>← Back to Site</button>
           </div>
+          {catalogNotice && <p className="checkout-alert">{catalogNotice}</p>}
         </div>
         <NftSaleHud />
       </section>
@@ -360,17 +414,20 @@ function NftSalesPage({ onBack, control, onAuthOpen }) {
         <div className="filter-bar secondary">
           {['All', ...shipClasses].map((shipClass) => <button key={shipClass} className={classFilter === shipClass ? 'active' : ''} onClick={() => setClassFilter(shipClass)}>{shipClass}</button>)}
         </div>
-        <div className="card-grid three">{filteredBlueprints.map((drop) => <NftCard key={`${drop.race}-${drop.shipClass}`} drop={drop} />)}</div>
+        <div className="card-grid three">{filteredBlueprints.map((drop) => <NftCard key={`${drop.race}-${drop.shipClass}`} drop={drop} onBuy={handleBuy} purchase={purchaseState[drop.id]} marketplaceReady={marketplaceReady} />)}</div>
       </section>
 
       <section className="section-pad">
         <SectionHeader eyebrow="Independent Industrial Blueprint" title="10 Mining Barge Master Original Blueprints." text="The Mining Barge is one independent industrial ship with 10 total Master Original Blueprints available. It supports asteroid mining, moon operations, gas extraction support, resource logistics, and industrial guild play." />
-        <div className="card-grid three"><NftCard drop={miningBlueprint} /></div>
+        <div className="card-grid three"><NftCard drop={withLiveInventory(miningBlueprint)} onBuy={handleBuy} purchase={purchaseState[miningBlueprint.id]} marketplaceReady={marketplaceReady} /></div>
       </section>
 
       <section className="section-pad">
         <SectionHeader eyebrow="Founder Capital Stations" title="Four Founder Capital Station NFTs." text="Each race has one named capital station NFT. The holder earns a 2–4% Credits tax on every market transaction in that race’s regional economy. Credits are the main in-game currency." />
-        <div className="card-grid four">{founderStationNFTs.map((drop) => <StationCard key={drop.name} drop={drop} />)}</div>
+        <div className="card-grid four">{founderStationNFTs.map((drop) => {
+          const liveDrop = withLiveInventory(drop);
+          return <StationCard key={drop.name} drop={liveDrop} onBuy={handleBuy} purchase={purchaseState[drop.id]} marketplaceReady={marketplaceReady} />;
+        })}</div>
       </section>
 
       <section className="section-pad two-col">
@@ -461,12 +518,14 @@ function AlphaSection({ control, onAuthOpen }) {
   return <section id="access" className="alpha-section"><div className="alpha-icon">✦</div><h2>{control.alpha.title}</h2><p>{control.alpha.body}</p><button className="sci-button" onClick={onAuthOpen}>{control.alpha.ctaLabel}</button></section>;
 }
 
-function NftCard({ drop, compact = false }) {
-  return <article className={`nft-card ${compact ? 'compact' : ''}`}><div className="nft-art"><span className="nft-category">{drop.category}</span><div className="nft-symbol">{drop.symbol}</div></div><div className="nft-body"><div className="nft-title-row"><div><h3>{drop.name}</h3><span className="remaining">{drop.remaining ?? drop.supplyCount} Remaining</span><small>{drop.supply}</small></div><b className="price">{drop.price}</b></div><p>{drop.perk}</p><p><b>Copy Rate:</b> {drop.copyRate}</p><p><b>Runs:</b> {drop.runs}</p><div className="button-row"><button className="sci-button">Buy Blueprint</button><button className="sci-button ghost">Details</button></div></div></article>;
+function NftCard({ drop, compact = false, onBuy, purchase, marketplaceReady = false }) {
+  const disabled = !marketplaceReady || purchase?.busy || (drop.remaining ?? drop.supplyCount) <= 0;
+  return <article className={`nft-card ${compact ? 'compact' : ''}`}><div className="nft-art"><span className="nft-category">{drop.category}</span><div className="nft-symbol">{drop.symbol}</div></div><div className="nft-body"><div className="nft-title-row"><div><h3>{drop.name}</h3><span className="remaining">{drop.remaining ?? drop.supplyCount} Remaining</span><small>{drop.supply}</small></div><b className="price">{drop.price}</b></div><p>{drop.perk}</p><p><b>Copy Rate:</b> {drop.copyRate}</p><p><b>Runs:</b> {drop.runs}</p>{onBuy ? <div className="button-row"><button className="sci-button" disabled={disabled} onClick={() => onBuy(drop, 'phantom')}>{purchase?.busy ? 'Processing...' : 'Buy with Phantom'}</button><button className="sci-button ghost" disabled={disabled} onClick={() => onBuy(drop, 'solflare')}>Buy with Solflare</button></div> : <div className="button-row"><button className="sci-button">Buy Blueprint</button><button className="sci-button ghost">Details</button></div>}{purchase?.message && <p className="purchase-message">{purchase.message}</p>}</div></article>;
 }
 
-function StationCard({ drop }) {
-  return <article className="station-card"><div className="nft-art station-art"><span className="nft-category">{drop.race}</span><div className="nft-symbol">{drop.symbol}</div></div><div className="nft-body"><div className="nft-title-row"><div><h3>{drop.name}</h3><small>{drop.supply}</small></div><b className="price">{drop.price}</b></div><p>{drop.perk}</p><div className="tax-box">{drop.creditTax} on regional market transactions</div><div className="button-row"><button className="sci-button">Buy Station</button><button className="sci-button ghost">Details</button></div></div></article>;
+function StationCard({ drop, onBuy, purchase, marketplaceReady = false }) {
+  const disabled = !marketplaceReady || purchase?.busy || (drop.remaining ?? drop.supplyCount) <= 0;
+  return <article className="station-card"><div className="nft-art station-art"><span className="nft-category">{drop.race}</span><div className="nft-symbol">{drop.symbol}</div></div><div className="nft-body"><div className="nft-title-row"><div><h3>{drop.name}</h3><span className="remaining">{drop.remaining ?? drop.supplyCount} Remaining</span><small>{drop.supply}</small></div><b className="price">{drop.price}</b></div><p>{drop.perk}</p><div className="tax-box">{drop.creditTax} on regional market transactions</div><div className="button-row"><button className="sci-button" disabled={disabled} onClick={() => onBuy?.(drop, 'phantom')}>{purchase?.busy ? 'Processing...' : 'Buy with Phantom'}</button><button className="sci-button ghost" disabled={disabled} onClick={() => onBuy?.(drop, 'solflare')}>Buy with Solflare</button></div>{purchase?.message && <p className="purchase-message">{purchase.message}</p>}</div></article>;
 }
 
 function SupplyCard({ item }) {

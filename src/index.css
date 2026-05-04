@@ -196,3 +196,24 @@ footer { max-width: 1280px; margin: 0 auto; padding: 28px 24px; border-top: 1px 
   line-height: 1.6;
   box-shadow: 0 0 40px rgba(79,163,183,.16);
 }
+
+.sci-button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+  transform: none;
+  box-shadow: none;
+}
+.purchase-message, .checkout-alert {
+  border: 1px solid rgba(141,219,236,.28);
+  background: rgba(79,163,183,.1);
+  border-radius: 14px;
+  color: rgba(255,255,255,.7);
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  padding: 12px 14px;
+}
+.checkout-alert {
+  max-width: 720px;
+  color: #8ddbec;
+}
