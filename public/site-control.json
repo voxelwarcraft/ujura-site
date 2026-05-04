@@ -50,7 +50,9 @@
           "author": "Majori Games",
           "publishedAt": "2026-05-04",
           "imageStyle": "linear-gradient(135deg,#101217,#5b7cff)",
-          "imageUrl": ""
+          "imageUrl": "",
+          "seoTitle": "Majori Games reveals Ujura and Makgura",
+          "seoDescription": "Two original online worlds establish the foundation for Majori's long-term universe strategy."
         },
         {
           "id": "ujura-risk-economy",
@@ -64,7 +66,9 @@
           "author": "Majori Games",
           "publishedAt": "2026-05-04",
           "imageStyle": "radial-gradient(circle at 35% 22%, rgba(88,231,255,.68), transparent 19%), radial-gradient(circle at 72% 45%, rgba(91,124,255,.42), transparent 26%), linear-gradient(135deg, #030914 0%, #071a38 44%, #180a30 100%)",
-          "imageUrl": ""
+          "imageUrl": "",
+          "seoTitle": "A sandbox economy where risk creates the story",
+          "seoDescription": "Mine resources, build ships, control routes, fight pirates, and lose what you bring into battle."
         },
         {
           "id": "makgura-clans-honor",
@@ -78,7 +82,9 @@
           "author": "Majori Games",
           "publishedAt": "2026-05-04",
           "imageStyle": "radial-gradient(circle at 50% 10%, rgba(240,179,91,.62), transparent 22%), radial-gradient(circle at 18% 65%, rgba(193,72,35,.30), transparent 28%), linear-gradient(135deg, #1a0d09 0%, #321b0f 45%, #070606 100%)",
-          "imageUrl": ""
+          "imageUrl": "",
+          "seoTitle": "A brutal fantasy world built around clans and honor",
+          "seoDescription": "Warbands, raids, territory, crafted gear, and PvP encounters with real consequence."
         }
       ]
     }
@@ -132,7 +138,9 @@
           "author": "Ujura Team",
           "publishedAt": "2026-05-04",
           "imageStyle": "radial-gradient(circle at center, rgba(79,163,183,.34), transparent 34%), radial-gradient(circle at 78% 22%, rgba(141,219,236,.22), transparent 20%), linear-gradient(135deg,#020611,#0b1f33)",
-          "imageUrl": ""
+          "imageUrl": "",
+          "seoTitle": "The Starcore turns the universe into a warzone",
+          "seoDescription": "Only one Starcore exists at a time, creating a global PvP flashpoint for null-sec alliances."
         },
         {
           "id": "ujura-blueprint-production",
@@ -146,7 +154,9 @@
           "author": "Ujura Team",
           "publishedAt": "2026-05-04",
           "imageStyle": "radial-gradient(circle at 45% 36%, rgba(79,163,183,.36), transparent 26%), linear-gradient(135deg,rgba(79,163,183,.12),rgba(255,255,255,.02))",
-          "imageUrl": ""
+          "imageUrl": "",
+          "seoTitle": "Blueprint ownership is production, not instant power",
+          "seoDescription": "Master Original Blueprints grant production rights while ships still require resources, time, and risk."
         },
         {
           "id": "ujura-security-status",
@@ -160,7 +170,9 @@
           "author": "Ujura Team",
           "publishedAt": "",
           "imageStyle": "radial-gradient(circle at 18% 22%, rgba(141,219,236,.28), transparent 18%), linear-gradient(135deg,#03050a,#0d2234)",
-          "imageUrl": ""
+          "imageUrl": "",
+          "seoTitle": "High-sec, low-sec, and null-sec shape player risk",
+          "seoDescription": "Security status defines where players can trade safely, pirate for profit, or fight for territory."
         }
       ]
     }

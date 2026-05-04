@@ -216,6 +216,32 @@ function formatPostDate(value) {
   return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+function usePostSeo(post, fallbackTitle, fallbackDescription) {
+  useEffect(() => {
+    const previousTitle = document.title;
+    let descriptionTag = document.querySelector('meta[name="description"]');
+    const previousDescription = descriptionTag?.getAttribute('content') || '';
+    if (!descriptionTag) {
+      descriptionTag = document.createElement('meta');
+      descriptionTag.setAttribute('name', 'description');
+      document.head.appendChild(descriptionTag);
+    }
+
+    if (post) {
+      document.title = post.seoTitle || post.title || fallbackTitle;
+      descriptionTag.setAttribute('content', post.seoDescription || post.excerpt || fallbackDescription);
+    } else {
+      document.title = fallbackTitle;
+      descriptionTag.setAttribute('content', fallbackDescription);
+    }
+
+    return () => {
+      document.title = previousTitle;
+      descriptionTag.setAttribute('content', previousDescription);
+    };
+  }, [post, fallbackTitle, fallbackDescription]);
+}
+
 function scrollToId(id) {
   document.querySelector(id)?.scrollIntoView({ behavior: 'smooth' });
 }
@@ -298,6 +324,7 @@ export default function App() {
 function HomePage({ goNfts, control, onAuthOpen }) {
   const primaryHref = control.hero.primaryCta.href || '#world';
   const [activePost, setActivePost] = useState(null);
+  usePostSeo(activePost, 'Ujura | Player-Owned Tactical Space MMO', 'Ujura is a player-owned tactical space MMO by Majori Games.');
 
   function handlePrimaryClick() {
     if (primaryHref.startsWith('#')) {
