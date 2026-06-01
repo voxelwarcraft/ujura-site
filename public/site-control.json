@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": null,
+  "updatedAt": "2026-06-01T20:01:58.912Z",
   "majori": {
     "domain": "majorigames.com",
     "statusBanner": {
@@ -23,13 +23,15 @@
     },
     "navigation": {
       "ujuraUrl": "https://ujura.com",
-      "alphaLabel": "Play Alpha",
-      "signInLabel": "Sign In"
+      "alphaLabel": "Connect Wallet",
+      "signInLabel": "Sign In",
+      "makguraUrl": "https://makgura.com",
+      "oasisCasinoUrl": "https://oasiscasino.io"
     },
     "foundersPass": {
       "enabled": true,
-      "title": "200 lifetime founder passes",
-      "body": "Founders Pass are limited NFT passes created to support the critical early development of the Majori Games ecosystem.",
+      "title": "lifetime founder passes",
+      "body": "Founders Pass are limited NFT passes created to support the critical early development of the Majori Games ecosystem. Only 300 will exist. Founder sale price is $1500 until June 1, 2026, then normal price is $2500. Holders receive a monthly token reward of 4.44 UJU and 4.44 Makgura coins.",
       "ctaLabel": "Buy Founders Pass"
     },
     "blog": {
@@ -173,6 +175,134 @@
           "imageUrl": "",
           "seoTitle": "High-sec, low-sec, and null-sec shape player risk",
           "seoDescription": "Security status defines where players can trade safely, pirate for profit, or fight for territory."
+        }
+      ]
+    }
+  },
+  "makgura": {
+    "domain": "makgura.com",
+    "statusBanner": {
+      "enabled": false,
+      "text": "",
+      "tone": "gold"
+    },
+    "hero": {
+      "badge": "Grounded Ancient War MMORPG",
+      "factionBadge": "Rome. Barbarians. Egypt.",
+      "title": "Makgura",
+      "subtitle": "Level. Fight. Conquer.",
+      "body": "A persistent, player-driven war MMORPG where players level from 1-60, fight for Rome, the Barbarian Horde, or Egypt, become a Gladiator in Colosseum PvP, capture cities, control territory, and compete over dynamic world resources.",
+      "primaryCta": {
+        "label": "Play Alpha",
+        "href": "https://play.makgura.com"
+      },
+      "secondaryCta": {
+        "label": "View NFT Sale",
+        "href": "https://makgura.com/nfts"
+      }
+    },
+    "navigation": {
+      "playAlphaLabel": "Play Alpha",
+      "walletLabel": "Connect Wallet",
+      "playAlphaUrl": "https://play.makgura.com"
+    },
+    "toggles": {
+      "walletButtonsEnabled": true,
+      "alphaAccessEnabled": true,
+      "blogEnabled": true
+    },
+    "alpha": {
+      "eyebrow": "Final Identity",
+      "title": "A persistent player-driven war MMORPG.",
+      "body": "Players level, fight, lose gear, become Gladiators in Colosseum PvP, control territory, govern cities, compete over dynamic resources, and reshape a constantly shifting ancient world.",
+      "primaryCtaLabel": "Play Alpha",
+      "primaryCtaHref": "https://play.makgura.com"
+    },
+    "blog": {
+      "enabled": true,
+      "eyebrow": "War Chronicle",
+      "title": "Makgura dispatches from the front.",
+      "intro": "Development updates, worldbuilding notes, faction reveals, and economy design for Makgura.",
+      "posts": [
+        {
+          "id": "makgura-professions-crafting-economy",
+          "status": "published",
+          "featured": true,
+          "category": "Professions",
+          "title": "Professions and crafting power the Makgura war economy",
+          "slug": "makgura-professions-crafting-economy",
+          "excerpt": "Gathering, refining, crafting, building, trading, and guild supply give Makgura players economic roles beyond combat.",
+          "seoTitle": "Makgura Professions and Crafting Economy",
+          "seoDescription": "Makgura professions include gathering, refining, crafting, building, trading, housing support, market supply, and guild war logistics.",
+          "body": "Makgura professions are designed to make the world feel alive outside of pure combat. Players should be able to build a reputation as gatherers, refiners, crafters, builders, traders, outfitters, and guild suppliers.\n\nGathering professions pull value out of the world: ore, stone, timber, hides, herbs, rare resources, and dangerous warzone materials. The best materials should often require travel, risk, protection, or control of contested territory.\n\nRefining professions turn raw materials into useful components. Ore becomes bars, hides become leather, timber becomes planks, and rare resources become the inputs needed for stronger gear, house upgrades, siege supplies, and market goods.\n\nCrafting professions create the things players actually need: weapons, armor, tools, potions, repair kits, furniture, house upgrades, outpost materials, siege parts, and replacement gear after PvP losses.\n\nThe housing and land plot economy gives professions another purpose. Player houses can create demand for building materials, furniture, storage upgrades, decorations, repairs, and prestige items crafted by other players.\n\nGuild warfare also needs supply chains. Sieges, raids, gold vein fights, and territory wars consume food, potions, gear, repairs, mounts, building parts, and replacement kits. That means a great crafter can matter to a warband as much as a great fighter.\n\nThe goal is a player-driven economy where combat creates demand, professions create supply, and city markets decide who gets rich.",
+          "author": "Makgura Team",
+          "publishedAt": "2026-05-04",
+          "imageStyle": "radial-gradient(circle at 22% 30%, rgba(214,168,90,.42), transparent 22%), radial-gradient(circle at 78% 28%, rgba(63,125,78,.28), transparent 24%), radial-gradient(circle at 52% 78%, rgba(184,50,42,.24), transparent 24%), linear-gradient(135deg,#12120d,#2c2414 48%,#070706)",
+          "imageUrl": ""
+        },
+        {
+          "id": "makgura-founder-city-land-nfts",
+          "status": "published",
+          "featured": true,
+          "category": "NFT Ownership",
+          "title": "Makgura NFTs: founder cities and home plot supply",
+          "slug": "makgura-founder-city-land-nfts",
+          "excerpt": "Makgura NFTs include 3 Founder Capital City NFTs and 600 home plot NFTs across Rome, Egypt, and the Barbarian capital with fixed SOL pricing.",
+          "seoTitle": "Makgura Founder City and Home Plot NFT Supply",
+          "seoDescription": "Makgura NFTs include Rome at 100 SOL with 300 plots, Egypt at 50 SOL with 200 plots, Barbarians at 25 SOL with 100 plots, and land plots from 0.15 SOL.",
+          "body": "Makgura NFTs are similar to Ujura because they represent scarce ownership, but the structure is different. Makgura is built around ancient-world real estate, capital cities, faction identity, and player housing.\n\nThe top layer is 3 Founder Capital City NFTs. There is one Founder Capital City NFT for each race or faction capital: Rome, Egypt, and the Barbarian Horde.\n\nRome is the biggest capital city. The Rome Founder Capital City NFT is priced at 100 SOL. Rome has 300 home plot NFTs: 150 small plots, 105 medium plots, and 45 large plots.\n\nEgypt is the middle-size capital city. The Egypt Founder Capital City NFT is priced at 50 SOL. Egypt has 200 home plot NFTs: 100 small plots, 70 medium plots, and 30 large plots.\n\nThe Barbarian capital is the smallest capital city. The Barbarian Founder Capital City NFT is priced at 25 SOL. Barbarians have 100 home plot NFTs: 50 small plots, 35 medium plots, and 15 large plots.\n\nAcross all capitals there are 600 home plot NFTs: 300 small, 210 medium, and 90 large. Small plots cost 0.15 SOL, medium plots cost 0.5 SOL, and large plots cost 1 SOL.\n\nThese plots work like real estate for player houses that players will be able to build in the future. The design goal is ownership and prestige, not pay-to-win. Founder city NFTs and land plots do not sell weapons, stats, or direct combat strength.",
+          "author": "Makgura Team",
+          "publishedAt": "2026-05-04",
+          "imageStyle": "radial-gradient(circle at 24% 28%, rgba(184,50,42,.40), transparent 22%), radial-gradient(circle at 78% 24%, rgba(45,128,197,.28), transparent 24%), radial-gradient(circle at 48% 76%, rgba(214,168,90,.38), transparent 28%), linear-gradient(135deg,#130d09,#2b1c10 48%,#070606)",
+          "imageUrl": ""
+        },
+        {
+          "id": "makgura-coin-mkg-token-design",
+          "status": "published",
+          "featured": true,
+          "category": "Token Design",
+          "title": "Makgura Coin (MKG) powers competitive rewards",
+          "slug": "makgura-coin-mkg-token-design",
+          "excerpt": "MKG is Makgura's premium reward token, earned through Gold Vein control and Top Gladiator PvP with 22-minute emissions and 2-year halvings.",
+          "seoTitle": "Makgura Coin (MKG) Token Design",
+          "seoDescription": "MKG is Makgura's premium reward token with an 8M max supply, Gold Vein and Top Gladiator rewards, 22-minute emissions, and 2-year halvings.",
+          "body": "MAKGURA (MKG) is the premium ecosystem token for the Makgura MMORPG. It is separate from normal in-game currency and is earned through competitive gameplay systems rather than bought power.\n\nMax supply is fixed at 8,000,000 MKG. Distribution is planned as 60% player rewards (4,800,000 MKG), 10% public sale (800,000 MKG), 5% Founders Pass Holders allocation (400,000 MKG), 10% seed round (800,000 MKG), 10% team and development (800,000 MKG), and 5% treasury (400,000 MKG).\n\nMKG uses simple Bitcoin-style scarcity: rewards emit roughly every 22 minutes and halve globally every 2 years. The goal is a long 20-25 year emission timeline with strong early incentives and a long tail of competitive rewards.\n\nThere are two primary earning paths. Gold Vein Control is the main guild-scale path, starting at 40 MKG per interval for groups that control, mine, and defend contested resource zones. Top Gladiator is the solo and small-scale path, starting at 10 MKG per interval for the highest-ranked PvP Gladiator.\n\nTogether, those systems start at 50 MKG per reward interval, matching the clean total-emission structure used across the Majori Games ecosystem while splitting Makgura rewards between territory warfare and Colosseum PvP excellence.\n\nUtility is designed around premium convenience and prestige: cosmetics, visual upgrades, governance votes, global bank storage expansion, a small capped XP boost around 5%, and market fee reductions for active traders and crafters.\n\nMKG does not provide direct combat power. It should reward skill, control, competition, and long-term commitment without turning Makgura into pay-to-win.",
+          "author": "Makgura Team",
+          "publishedAt": "2026-05-04",
+          "imageStyle": "radial-gradient(circle at 24% 30%, rgba(214,168,90,.56), transparent 22%), radial-gradient(circle at 76% 22%, rgba(184,50,42,.30), transparent 24%), radial-gradient(circle at 50% 78%, rgba(45,128,197,.24), transparent 26%), linear-gradient(135deg,#17130d,#34200e 48%,#070606)",
+          "imageUrl": ""
+        },
+        {
+          "id": "makgura-war-economy",
+          "status": "published",
+          "featured": true,
+          "category": "World Design",
+          "title": "Risk, territory, and recovery define Makgura",
+          "slug": "risk-territory-and-recovery-define-makgura",
+          "excerpt": "Makgura connects leveling, faction war, Colosseum Gladiator PvP, city control, loot risk, banks, housing, and world events into one ancient war MMORPG loop.",
+          "seoTitle": "Risk, territory, and recovery define Makgura",
+          "seoDescription": "Makgura connects leveling, faction war, Colosseum Gladiator PvP, city control, loot risk, banks, housing, and world events into one ancient war MMORPG loop.",
+          "body": "Makgura is built around a simple promise: the world should remember what players do. Leveling, faction choice, Gladiator ranks in Colosseum PvP, death risk, city control, resource conflict, safe storage, and recovery systems all connect so war has weight without permanently trapping players after a loss.",
+          "author": "Makgura Team",
+          "publishedAt": "2026-05-04",
+          "imageStyle": "radial-gradient(circle at 50% 10%, rgba(240,179,91,.62), transparent 22%), radial-gradient(circle at 18% 65%, rgba(193,72,35,.30), transparent 28%), linear-gradient(135deg, #1a0d09 0%, #321b0f 45%, #070606 100%)",
+          "imageUrl": ""
+        },
+        {
+          "id": "makgura-factions",
+          "status": "draft",
+          "featured": false,
+          "category": "Factions",
+          "title": "Rome, Barbarians, and Egypt shape the war map",
+          "slug": "rome-barbarians-egypt-war-map",
+          "excerpt": "Three playable powers create different routes into formation combat, raiding pressure, and trade-driven control.",
+          "seoTitle": "Rome, Barbarians, and Egypt shape the war map",
+          "seoDescription": "Three playable powers create different routes into formation combat, raiding pressure, and trade-driven control.",
+          "body": "Rome, the Barbarian Horde, and Egypt are built to feel different at every layer: combat identity, economy, territory pressure, logistics, and political control.",
+          "author": "Makgura Team",
+          "publishedAt": "",
+          "imageStyle": "radial-gradient(circle at 22% 32%, rgba(184,50,42,.34), transparent 22%), radial-gradient(circle at 76% 28%, rgba(45,128,197,.26), transparent 24%), linear-gradient(135deg,#12110d,#2b1c11)",
+          "imageUrl": ""
         }
       ]
     }
